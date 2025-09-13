@@ -10,7 +10,7 @@ serverSocket.listen(5)
 # Gerar chaves RSA
 print("Gerando chaves RSA...")
 rsa = RSA()
-public_key, private_key = rsa.generate_keypair(512)  # Usando 512 bits para ser mais rápido
+public_key, private_key = rsa.generate_keypair(4096) 
 
 print ("TCP Server com RSA\n")
 print(f"Chave pública: {public_key}")

@@ -93,7 +93,7 @@ class RSA:
             if cls.is_prime(n):
                 return n
 
-    def generate_keypair(self, keysize=1024):
+    def generate_keypair(self, keysize=4096):
         """Gera um par de chaves RSA"""
         print(f"Gerando chaves RSA de {keysize} bits...")
         
