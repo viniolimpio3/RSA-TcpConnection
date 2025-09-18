@@ -10,16 +10,20 @@ serverSocket.listen(5)
 # Gerar chaves RSA
 print("Gerando chaves RSA...")
 rsa = RSA()
-public_key, private_key = rsa.generate_keypair(4096) 
+server_public_key, private_key = rsa.generate_keypair(4096) 
 
 print ("TCP Server com RSA\n")
-print(f"Chave pública: {public_key}")
+print(f"Chave pública: {server_public_key}")
 
 connectionSocket, addr = serverSocket.accept()
 
 # Enviar chave pública para o cliente
-public_key_data = json.dumps(public_key).encode('utf-8')
-connectionSocket.send(public_key_data)
+server_public_key_data = json.dumps(server_public_key).encode('utf-8')
+connectionSocket.send(server_public_key_data)
+
+# Recebe a chave pública do cliente
+client_public_key_data = connectionSocket.recv(65000)
+client_public_key = tuple(json.loads(client_public_key_data.decode('utf-8')))
 
 # Receber mensagem criptografada
 encrypted_data = connectionSocket.recv(65000)
@@ -37,8 +41,10 @@ print("Mensagem descriptografada do cliente:", decrypted_message)
 processed_message = decrypted_message.upper()
 print("Mensagem processada:", processed_message)
 
-# Enviar resposta em texto claro
-connectionSocket.send(processed_message.encode('utf-8'))
+# Enviar resposta criptografada de volta ao cliente
+encrypted_response = RSA.encrypt(processed_message, client_public_key)
+print(f"Resposta criptografada: {encrypted_response}")
+connectionSocket.send(str(encrypted_response).encode('utf-8'))
 
 print("Resposta enviada para o cliente")
 connectionSocket.close()
